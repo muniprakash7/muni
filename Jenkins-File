@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    environment {
+        APP_DIR = "/var/www/html"
+        WORKSPACE_DIR = "${WORKSPACE}"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/muniprakash7/carwebsite.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Static website detected - no compilation required'
+                sh '''
+                    ls -la
+                '''
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running basic validation checks'
+                sh '''
+                    test -f index.html
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    sudo rm -rf ${APP_DIR:?}/*
+                    sudo cp -r * ${APP_DIR}/
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment successful: carwebsite updated on EC2'
+        }
+        failure {
+            echo 'Pipeline failed'
+        }
+    }
+}
