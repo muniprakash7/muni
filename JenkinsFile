@@ -1,0 +1,46 @@
+pipeline {
+    // 1. Where to execute the pipeline
+    agent any 
+
+    // 2. Environment variables available to all stages
+    environment {
+        APP_NAME = 'my-web-app'
+    }
+
+    // 3. The actual sequence of work
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building ${env.APP_NAME}..."
+                // Example compilation command
+                // sh 'npm install' or 'mvn clean package'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                echo 'Running unit tests...'
+                // sh 'npm test' or 'mvn test'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+            }
+        }
+    }
+
+    // 4. Actions to take based on pipeline outcome
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Checking logs...'
+        }
+    }
+}
